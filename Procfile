@@ -1,1 +1,1 @@
-web: gradlew run
+web: java -jar build/libs/kotlin_multi_demo-jvm-1.0.jar

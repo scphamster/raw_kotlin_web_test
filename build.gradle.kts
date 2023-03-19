@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.scphamster"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     jcenter()
@@ -63,6 +63,13 @@ application {
 tasks.named<Copy>("jvmProcessResources") {
     val jsBrowserDistribution = tasks.named("jsBrowserDistribution")
     from(jsBrowserDistribution)
+}
+
+tasks.withType<Jar> {
+    manifest{
+        attributes["Main-Class"] = "com.github.scphamster.application.ServerKt"
+    }
+
 }
 
 tasks.named<JavaExec>("run") {
