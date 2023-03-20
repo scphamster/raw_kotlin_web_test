@@ -13,12 +13,32 @@ repositories {
 }
 
 kotlin {
+
     jvm {
         jvmToolchain(8)
         withJava()
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
+        compilations {
+            val main = getByName("main")
+            tasks {
+                register<Jar>("buildFatJar2") {
+                    group = "application"
+
+                    dependsOn(build)
+                    doFirst{
+                        manifest{
+                            attributes["Main-Class"] = "ServerKt"
+                        }
+                        from(configurations.getByName("runtimeClasspath").map {if (it.isDirectory) it else zipTree(it)}, main.output.classesDirs)
+                    }
+
+                    archiveBaseName.set("${project.name}-fat2")
+                }
+            }
+        }
+
     }
     js(IR) {
         binaries.executable()
@@ -56,21 +76,17 @@ kotlin {
     }
 }
 
-application {
-    mainClass.set("com.github.scphamster.application.ServerKt")
-}
-
 tasks.named<Copy>("jvmProcessResources") {
     val jsBrowserDistribution = tasks.named("jsBrowserDistribution")
     from(jsBrowserDistribution)
 }
 
-tasks.withType<Jar> {
-    manifest{
-        attributes["Main-Class"] = "com.github.scphamster.application.ServerKt"
-    }
-
-}
+//tasks.withType<Jar> {
+//    manifest{
+//        attributes["Main-Class"] = "com.github.scphamster.application.MainKt"
+//    }
+//
+//}
 
 tasks.named<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jvmJar"))
