@@ -1,11 +1,12 @@
+project.setProperty("mainClassName", "com.github.scphamster.applicaion.MainKt")
+
 plugins {
     kotlin("multiplatform") version "1.8.0"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
     application
 }
-
 group = "com.github.scphamster"
 version = "1.0"
-
 repositories {
     jcenter()
     mavenCentral()
@@ -20,24 +21,24 @@ kotlin {
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
-        compilations {
-            val main = getByName("main")
-            tasks {
-                register<Jar>("buildFatJar2") {
-                    group = "application"
-
-                    dependsOn(build)
-                    doFirst{
-                        manifest{
-                            attributes["Main-Class"] = "ServerKt"
-                        }
-                        from(configurations.getByName("runtimeClasspath").map {if (it.isDirectory) it else zipTree(it)}, main.output.classesDirs)
-                    }
-
-                    archiveBaseName.set("${project.name}-fat2")
-                }
-            }
-        }
+//        compilations {
+//            val main = getByName("main")
+//            tasks {
+//                register<Jar>("buildFatJar2") {
+//                    group = "application"
+//
+//                    dependsOn(build)
+//                    doFirst{
+//                        manifest{
+//                            attributes["Main-Class"] = "ServerKt"
+//                        }
+//                        from(configurations.getByName("runtimeClasspath").map {if (it.isDirectory) it else zipTree(it)}, main.output.classesDirs)
+//                    }
+//
+//                    archiveBaseName.set("${project.name}-fat2")
+//                }
+//            }
+//        }
 
     }
     js(IR) {
